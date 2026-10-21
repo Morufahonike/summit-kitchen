@@ -1,26 +1,18 @@
-# dependencies
 node_modules/
-
-# next.js / build
 .next/
 out/
 build/
+coverage/
 *.tsbuildinfo
 next-env.d.ts
+.DS_Store
+npm-debug.log*
 
-# environment & secrets — never commit
+# secrets — never commit
 .env
 .env.*
 !.env.example
-*.pem
-*.key
 
-# testing
-coverage/
-playwright-report/
+# local test artefacts
 test-results/
-
-# misc
-.DS_Store
-npm-debug.log*
-*.log
+screenshots/

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Sample product illustration">
+  <rect width="800" height="800" fill="#F3EEE4"/>
+  <ellipse cx="400" cy="660" rx="300" ry="26" fill="#000" opacity=".07"/>
+  <g >
+    <path d="M300 640 v-300 a110 110 0 0 1 220 0 v300z" fill="#7A8F6B"/>
+    <path d="M300 420 a50 50 0 0 1 -60 -70 l40 -40 l40 60z" fill="#7A8F6B"/>
+    <rect x="290" y="600" width="240" height="50" rx="14" fill="#EFE8DA"/>
+    <line x1="320" y1="380" x2="500" y2="380" stroke="#667b57" stroke-width="4" stroke-dasharray="10 10"/><line x1="320" y1="430" x2="500" y2="430" stroke="#667b57" stroke-width="4" stroke-dasharray="10 10"/><line x1="320" y1="480" x2="500" y2="480" stroke="#667b57" stroke-width="4" stroke-dasharray="10 10"/><line x1="320" y1="530" x2="500" y2="530" stroke="#667b57" stroke-width="4" stroke-dasharray="10 10"/></g>
+  <g transform="translate(28 748)"><rect width="168" height="30" rx="15" fill="#2C2C2C" opacity=".82"/><text x="84" y="20" font-family="Arial, sans-serif" font-size="13" letter-spacing="2" fill="#FAF8F2" text-anchor="middle">SAMPLE IMAGE</text></g>
+</svg>

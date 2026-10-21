@@ -1,0 +1,260 @@
+// Summit Kitchen — database schema
+// Money is stored as integers in minor units (cents / kobo). Catalogue prices are in USD cents.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum Currency {
+  USD
+  NGN
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  PAYMENT_FAILED
+  EXPIRED
+  NEEDS_REVIEW
+}
+
+enum PaymentStatus {
+  INITIALIZED
+  SUCCESS
+  FAILED
+  ABANDONED
+  MISMATCH
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         Role      @default(CUSTOMER)
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+  orders       Order[]
+  addresses    Address[]
+  auditLogs    AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userAgent String?
+
+  @@index([userId])
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  line1      String
+  line2      String?
+  city       String
+  state      String
+  postalCode String?
+  country    String
+  isDefault  Boolean @default(false)
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String
+  sortOrder   Int       @default(0)
+  products    Product[]
+}
+
+model Product {
+  id                String              @id @default(cuid())
+  slug              String              @unique
+  sku               String              @unique
+  name              String
+  shortDescription  String
+  description       String
+  brand             String              @default("Summit Kitchen")
+  material          String?
+  priceUsdCents     Int
+  compareAtUsdCents Int?
+  stock             Int                 @default(0)
+  lowStockThreshold Int                 @default(5)
+  images            String[]
+  features          String[]
+  isActive          Boolean             @default(true)
+  isFeatured        Boolean             @default(false)
+  /// true = placeholder catalogue data, not a real supplier product
+  isSample          Boolean             @default(true)
+  /// future supplier integration (e.g. BigBuy) — unused until approved
+  supplier          String?
+  supplierSku       String?
+  categoryId        String
+  category          Category            @relation(fields: [categoryId], references: [id])
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  orderItems        OrderItem[]
+  movements         InventoryMovement[]
+
+  @@index([categoryId])
+  @@index([isActive, isFeatured])
+}
+
+model InventoryMovement {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  change    Int
+  reason    String
+  orderId   String?
+  actorId   String?
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model Order {
+  id                  String             @id @default(cuid())
+  number              String             @unique
+  userId              String?
+  user                User?              @relation(fields: [userId], references: [id])
+  email               String
+  status              OrderStatus        @default(PENDING_PAYMENT)
+  /// currency the customer browsed in
+  displayCurrency     Currency
+  /// currency actually charged by the payment provider
+  currency            Currency
+  /// USD -> NGN rate locked at checkout
+  exchangeRate        Decimal            @db.Decimal(14, 4)
+  subtotal            Int
+  shippingFee         Int
+  total               Int
+  shippingMethod      String
+  shipFullName        String
+  shipPhone           String
+  shipLine1           String
+  shipLine2           String?
+  shipCity            String
+  shipState           String
+  shipPostalCode      String?
+  shipCountry         String
+  trackingCarrier     String?
+  trackingNumber      String?
+  notes               String?
+  stockReleased       Boolean            @default(false)
+  paidAt              DateTime?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  items               OrderItem[]
+  payments            Payment[]
+  events              OrderEvent[]
+
+  @@index([email])
+  @@index([status])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  name        String
+  sku         String
+  unitPrice   Int
+  quantity    Int
+  lineTotal   Int
+}
+
+model OrderEvent {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  message   String
+  /// internal notes are hidden from customers
+  internal  Boolean     @default(false)
+  createdAt DateTime    @default(now())
+
+  @@index([orderId])
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider    String
+  reference   String        @unique
+  status      PaymentStatus @default(INITIALIZED)
+  amount      Int
+  currency    Currency
+  paidAmount  Int?
+  paidCurrency String?
+  channel     String?
+  cardBrand   String?
+  last4       String?
+  failureReason String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+/// one row per processed webhook delivery — the unique key makes processing idempotent
+model WebhookEvent {
+  id         String   @id @default(cuid())
+  provider   String
+  eventKey   String   @unique
+  event      String
+  reference  String?
+  outcome    String
+  receivedAt DateTime @default(now())
+}
+
+model ExchangeRate {
+  id        String   @id @default(cuid())
+  base      String
+  quote     String
+  rate      Decimal  @db.Decimal(14, 4)
+  source    String
+  /// manual rates set by an admin take priority
+  isManual  Boolean  @default(false)
+  fetchedAt DateTime @default(now())
+
+  @@index([base, quote, fetchedAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id])
+  action    String
+  target    String?
+  details   Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

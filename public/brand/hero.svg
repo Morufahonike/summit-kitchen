@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Kitchen still life with a green Dutch oven, stoneware bowls and wooden utensils">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6F2EA"/><stop offset="1" stop-color="#E8E0D1"/></linearGradient>
+    <linearGradient id="counter" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EDE6D8"/><stop offset="1" stop-color="#DCD2BF"/></linearGradient>
+    <radialGradient id="light" cx=".75" cy=".2" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#wall)"/>
+  <path d="M0 220 C 300 260 500 160 760 230 S 1100 200 1200 260" stroke="#e3dccf" stroke-width="3" fill="none"/>
+  <path d="M0 420 C 260 380 420 470 700 410 S 1000 450 1200 400" stroke="#e6dfd2" stroke-width="2" fill="none"/>
+  <rect width="1200" height="900" fill="url(#light)"/>
+  <rect x="0" y="660" width="1200" height="240" fill="url(#counter)"/>
+  <rect x="0" y="652" width="1200" height="12" fill="#cfc4ae"/>
+  <!-- wooden board behind -->
+  <rect x="770" y="250" width="230" height="410" rx="40" fill="#B88A5A"/><circle cx="885" cy="292" r="16" fill="#EDE6D8"/>
+  <rect x="790" y="330" width="190" height="320" rx="24" fill="none" stroke="#a87a4c" stroke-width="5"/>
+  <!-- plant -->
+  <path d="M110 660 h150 l-15 -150 h-120z" fill="#F3EFE6" stroke="#ddd4c4" stroke-width="3"/>
+  <path d="M185 515 q -40 -165 -64 -330" stroke="#5d5a3e" stroke-width="3" fill="none"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(183.320987654321 478.3333333333333) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(180.06172839506172 441.6666666666667) rotate(-50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(175.22222222222223 405) rotate(50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(168.80246913580248 368.33333333333337) rotate(-50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(160.80246913580245 331.66666666666663) rotate(50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(151.2222222222222 295) rotate(-50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(140.06172839506172 258.3333333333333) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(127.32098765432099 221.66666666666669) rotate(-50) scale(1.04)"/><path d="M190 515 q 25 -190 40 -380" stroke="#5d5a3e" stroke-width="3" fill="none"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(191.04938271604937 472.77777777777777) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(193.08641975308643 430.55555555555554) rotate(-50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(196.11111111111111 388.33333333333337) rotate(50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(200.12345679012347 346.1111111111111) rotate(-50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(205.12345679012344 303.8888888888889) rotate(50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(211.11111111111111 261.6666666666667) rotate(-50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(218.0864197530864 219.44444444444446) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(226.0493827160494 177.22222222222223) rotate(-50) scale(1.04)"/><path d="M180 520 q -90 -130 -144 -260" stroke="#5d5a3e" stroke-width="3" fill="none"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(176.22222222222223 491.1111111111111) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(168.88888888888889 462.22222222222223) rotate(-50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(158 433.33333333333337) rotate(50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(143.55555555555554 404.44444444444446) rotate(-50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(125.55555555555554 375.55555555555554) rotate(50) scale(1.04)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(104 346.6666666666667) rotate(-50) scale(0.8)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#556B3F" transform="translate(78.88888888888889 317.77777777777777) rotate(50) scale(0.92)"/><ellipse cx="0" cy="-26" rx="11" ry="28" fill="#7A8F6B" transform="translate(50.22222222222223 288.8888888888889) rotate(-50) scale(1.04)"/>
+  <!-- utensil crock -->
+  <g transform="translate(560 160) scale(.62)">
+    <g transform="rotate(-18 400 600)"><rect x="390" y="190" width="20" height="300" rx="10" fill="#B88A5A"/><rect x="365" y="160" width="70" height="70" rx="10" fill="#90948f"/></g><g transform="rotate(-6 400 600)"><rect x="390" y="190" width="20" height="300" rx="10" fill="#B88A5A"/><ellipse cx="400" cy="190" rx="40" ry="34" fill="#B88A5A"/></g><g transform="rotate(6 400 600)"><rect x="390" y="190" width="20" height="300" rx="10" fill="#B88A5A"/><rect x="365" y="160" width="70" height="70" rx="10" fill="#90948f"/></g><g transform="rotate(18 400 600)"><rect x="390" y="190" width="20" height="300" rx="10" fill="#B88A5A"/><ellipse cx="400" cy="190" rx="40" ry="34" fill="#B88A5A"/></g>
+    <path d="M270 400 h260 l-20 220 a30 30 0 0 1 -30 28 h-160 a30 30 0 0 1 -30 -28z" fill="#EFE8DA"/>
+    <rect x="262" y="390" width="276" height="26" rx="13" fill="#e0d9cb"/></g>
+  <!-- stacked bowls (behind the pot) -->
+  <g transform="translate(800 345) scale(.55)">
+    <path d="M160 460 h480 a240 180 0 0 1 -480 0z" fill="#EFE8DA" stroke="#d6cfc1" stroke-width="4"/>
+    <path d="M220 400 h360 a180 140 0 0 1 -360 0z" fill="#D5CBB8"/>
+    <path d="M280 345 h240 a120 95 0 0 1 -240 0z" fill="#7A8F6B"/></g>
+  <!-- dutch oven hero -->
+  <g transform="translate(230 175) scale(.95)">
+    <rect x="150" y="430" width="70" height="34" rx="17" fill="#1b2716"/>
+    <rect x="580" y="430" width="70" height="34" rx="17" fill="#1b2716"/>
+    <path d="M200 400 h400 v170 a70 70 0 0 1 -70 70 h-260 a70 70 0 0 1 -70 -70z" fill="#2F3B2A"/>
+    <path d="M225 420 h30 v150 a40 40 0 0 0 20 36 h-10 a50 50 0 0 1 -40 -48z" fill="#4e5a49" opacity=".6"/>
+    <ellipse cx="400" cy="398" rx="222" ry="36" fill="#202c1b"/>
+    <ellipse cx="400" cy="388" rx="208" ry="28" fill="#3c4837"/>
+    <rect x="370" y="330" width="60" height="50" rx="14" fill="#C9A96A"/>
+    <rect x="360" y="322" width="80" height="16" rx="8" fill="#e3c384"/></g>
+  <ellipse cx="640" cy="790" rx="420" ry="20" fill="#000" opacity=".05"/>
+</svg>

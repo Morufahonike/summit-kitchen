@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/* Summit Kitchen brand tokens — from the brand board (Brand Colours / Typography) */
+@theme {
+  --color-sage: #7a8f6b;      /* Primary */
+  --color-olive: #556b3f;     /* Secondary */
+  --color-ivory: #faf8f2;     /* Background */
+  --color-gold: #c9a96a;      /* Accent — Champagne Gold */
+  --color-taupe: #d5cbb8;     /* Neutral */
+  --color-charcoal: #2c2c2c;  /* Text */
+  /* derived tints (not on the board) for surfaces, dark panels and states */
+  --color-forest: #2f3b2a;
+  --color-sand: #f1ece2;
+  --color-line: #e4ddcf;
+  --color-muted: #6b6a64;
+  --color-danger: #a4442f;
+
+  --font-display: "Playfair Display Variable", "Playfair Display", Georgia, serif;
+  --font-sans: "Montserrat Variable", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+    font-family: var(--font-sans);
+    font-feature-settings: "lnum";
+  }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+  ::selection { background: var(--color-taupe); }
+  :focus-visible { outline: 2px solid var(--color-olive); outline-offset: 2px; }
+}
+
+@utility container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+@utility eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-olive; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold tracking-wide transition disabled:cursor-not-allowed disabled:opacity-50; }
+/* gold with charcoal text: white-on-gold fails WCAG contrast, charcoal passes (≈8:1) */
+@utility btn-gold { @apply btn bg-gold text-charcoal hover:bg-[#bd9b5a]; }
+@utility btn-primary { @apply btn bg-olive text-ivory hover:bg-forest; }
+@utility btn-outline { @apply btn border border-charcoal/25 text-charcoal hover:border-charcoal hover:bg-white; }
+@utility input { @apply w-full rounded-lg border border-line bg-white px-3.5 py-2.5 text-sm text-charcoal placeholder:text-muted/70 focus:border-olive focus:outline-none focus:ring-2 focus:ring-olive/20; }
+@utility label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wider text-charcoal/80; }
+@utility card { @apply rounded-2xl border border-line bg-white; }
+@utility field-error { @apply mt-1 text-xs text-danger; }

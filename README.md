@@ -1,121 +1,88 @@
 # Summit Kitchen — e-commerce
 
-Storefront and admin dashboard for **Summit Kitchen Services Limited (RC 9927529)**.
-Next.js (App Router) · React · TypeScript · Tailwind CSS v4 · PostgreSQL · Prisma · Paystack (TEST mode).
+Storefront and admin for **Summit Kitchen Services Limited**: manufacturing, processing, repairing and trading in kitchen appliances and products.
 
-> **Status: pre-launch preview.** All products and prices are labelled **samples**. Delivery rates are
-> **not configured**, so checkout is disabled until an admin adds delivery zones. Payments are **Paystack
-> test mode only**; live payments are blocked in code until the owner approves them. See
-> [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md).
+**Stack:** Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · PostgreSQL · Prisma 6
 
-## What's included
+> **Status: development build.** The catalogue is **sample data** (every product has `isSample = true` and shows a "Sample" badge). No supplier is integrated. Payments use a local **simulator** or Paystack **test** keys; live keys are refused unless `ALLOW_LIVE_PAYMENTS=true`.
 
-| Area | Features |
-|---|---|
-| Storefront | Branded home (hero, featured, bestsellers, categories), collections, catalogue with search, category/price/stock filters, sorting, pagination, product pages, about, delivery & returns placeholder |
-| Cart & checkout | Server-side cart, quantity limits, live stock checks, totals recomputed on the server, delivery fee by state, order references (`SK-YYMMDD-XXXXXX`), stock reserved at order time and released if unpaid |
-| Payments | Paystack hosted checkout (card: Mastercard / Visa / Verve), server-side verification, HMAC-SHA512 webhook verification, amount/currency/reference matching, idempotent confirmation, duplicate-webhook protection, live-key guard |
-| Accounts | Register, sign in, sign out, password reset, change password, profile, saved addresses, order history, order tracking (account, private link, or reference + email lookup) |
-| Admin | Dashboard, products (create/edit/archive), categories, stock adjustments with audit trail, orders (status workflow, tracking numbers), customers (roles, disable), payments & webhook log, delivery zones, activity log |
-| Security | scrypt password hashing, hashed session tokens (httpOnly cookies), login lockout + rate limits, role checks in every admin action, no open redirects, guarded order access, CSP and security headers, DB check constraints, no card data stored |
+## Features
 
-## Screenshots
+- **Storefront:** homepage, collections, search, filters (category, price in the selected currency, material, stock), sorting, product pages, cart, checkout
+- **Currency:** USD by default with a USD/NGN switch. Prices are stored in USD cents and converted with a cached USD→NGN rate (live feed → stored rate → env fallback; admins can set a manual override). The rate is locked into each order.
+- **Accounts:** register, sign in and out, order history, saved address, password change. Sessions use bcrypt hashes and httpOnly cookies, and only token hashes are stored in the database.
+- **Order tracking:** customers look up an order with its number and email; registered customers also see their order timeline.
+- **Admin** (`/admin`, ADMIN role only):
+  - dashboard
+  - orders: filter, status workflow, tracking numbers, internal notes, payment re-verification
+  - products: create and edit
+  - inventory: stock adjustments with an audit trail, held stock
+  - customers and roles
+  - settings: exchange rate, payment status, activity log
+- **Payments (Paystack):**
+  - Paystack's hosted checkout handles the card; card data never touches this server.
+  - The server verifies each payment through the Transactions API.
+  - Webhooks are checked with a timing-safe HMAC-SHA512 signature.
+  - Duplicate webhooks are idempotent.
+  - Amount and currency mismatches put the order on hold (`NEEDS_REVIEW`).
+  - Stock is reserved atomically and released exactly once when a payment fails or an order expires.
 
-Rendered from the real page components with the sample catalogue (fonts shown are fallbacks; Playfair
-Display and Montserrat load in a real build). More in [`docs/screenshots`](docs/screenshots).
+## Local setup
 
-![Overview of storefront and admin pages](docs/screenshots/overview.png)
-
-## Requirements
-
-- Node.js 22.18+ (TypeScript scripts run with `node --experimental-strip-types`)
-- PostgreSQL 14+
-
-## Setup
-
-**On Windows, follow [`docs/SETUP-WINDOWS.md`](docs/SETUP-WINDOWS.md)** (PowerShell commands, including how to
-push the transfer bundle to GitHub). On macOS / Linux:
+Requires Node.js 20.9+ and PostgreSQL 14+.
 
 ```bash
+# 1. database (example — any local Postgres works)
+createuser summit --pwprompt --createdb
+createdb summit_kitchen -O summit
+
+# 2. config
+cp .env.example .env
+#    - DATABASE_URL: your local connection string
+#    - PAYSTACK_SECRET_KEY: any random string starting sk_test_ while PAYMENT_PROVIDER=mock
+#    - SEED_ADMIN_PASSWORD: a real password, 12+ characters
+
+# 3. install, create schema, seed
 npm install
-cp .env.example .env              # fill in DATABASE_URL, APP_URL, CRON_SECRET, Paystack TEST keys
-npx prisma migrate deploy         # apply migrations
-npx prisma generate
-npm run db:seed                   # labelled SAMPLE catalogue (no delivery zones, no users)
-npm run admin:create              # reads ADMIN_EMAIL / ADMIN_PASSWORD from .env (14+ chars); then remove ADMIN_PASSWORD
-npm run dev
+npx prisma migrate dev --name init     # creates prisma/migrations/… — commit this folder
+npm run db:seed                        # 7 categories, 29 SAMPLE products, first admin
+
+# 4. run
+npm run dev                            # http://localhost:3000  (admin: /admin)
 ```
 
-Then sign in at `/account/login` with the admin account and go to **Admin → Delivery** to add delivery
-zones once real rates are confirmed. Checkout stays disabled until at least one zone exists.
+Regenerate the placeholder illustrations with `npx tsx scripts/gen-sample-art.ts`.
 
-> The initial migration was written by hand because the Prisma CLI couldn't be installed in the build
-> environment. It has been applied and tested on PostgreSQL 16. On first setup, run
-> `npx prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url <empty-db-url>`
-> to confirm there's no drift (expected output: empty).
-
-## Paystack (test mode)
-
-1. In the Paystack dashboard, stay in **Test Mode** and copy the `sk_test_…` / `pk_test_…` keys into `.env`.
-2. Set the webhook URL to `https://<your-domain>/api/paystack/webhook` (for local testing use a tunnel).
-3. Pay with Paystack's published test cards.
-
-How payment is confirmed: the browser returns to `/checkout/callback`, **and** Paystack calls the webhook.
-Both paths call the same idempotent `confirmPayment()`, which re-verifies the transaction with Paystack's
-API and checks the reference, amount (kobo) and currency against the stored payment before marking the
-order paid. Whichever arrives first wins; the other is a no-op.
-
-**Live payments** require *both* a `sk_live_…` key *and* `PAYSTACK_ALLOW_LIVE="true"`. Without the flag,
-the app refuses to start payments. Only set it after the business owner has approved going live.
-
-## Scheduled cleanup
-
-Unpaid orders hold stock for `RESERVATION_MINUTES` (default 30). Expired holds are released automatically
-when checkout runs and when an admin opens the dashboard. For a backstop, call every 10–15 minutes:
+## Tests
 
 ```bash
-curl -X POST -H "Authorization: Bearer $CRON_SECRET" https://<your-domain>/api/cron/release-reservations
+npm run typecheck        # TypeScript
+npm test                 # unit tests: money, shipping, webhook signatures, payment guards
+npx playwright install chromium
+npm run dev              # in a second terminal, with PAYMENT_PROVIDER=mock
+npm run test:e2e         # ~60 browser checks: payments, security, access control, responsive layouts
 ```
 
-## Testing
+`test:e2e` writes screenshots to `screenshots/`. It changes data (orders, stock, a manual exchange rate it later removes), so run it against a development database only — `npm run db:reset` restores a clean seeded state.
 
-```bash
-npm run test:unit                                       # 48 unit tests, no dependencies needed
-TEST_DB_ADMIN_URL=postgresql:///postgres npm run test:db  # 19 PostgreSQL integrity & concurrency tests
-npm run typecheck && npm run lint
-npx playwright install && npm run build && npm run test:e2e   # mobile / tablet / desktop
-```
+## Payment modes
 
-- **Unit** (`tests/unit`): money, validation, pricing, passwords, references, Paystack signatures and
-  verification rules, order access, order transitions, catalogue parameters, admin forms, open-redirect guard,
-  sample-catalogue integrity.
-- **Database** (`tests/db/run.sh`): runs the real migration on a throwaway database, then proves 12 concurrent
-  buyers for 5 units sell exactly 5, constraints reject negative stock / bad totals / duplicate payments /
-  replayed webhooks, payment confirmation transitions once under concurrency, and the rate limiter counts atomically.
-- **End-to-end** (`tests/e2e`): storefront flows, responsive overflow checks, admin access control, webhook
-  signature rejection, security headers.
+| `PAYMENT_PROVIDER` | Behaviour |
+|---|---|
+| `mock` (default) | Opens `/dev/paystack/<ref>`, a local simulator. From there you can test a success, a declined card, 3× duplicate webhooks, an underpayment, or an abandoned payment. Its webhooks are signed exactly like Paystack's. Disabled in production. |
+| `paystack` | Real Paystack API. Use `sk_test_…` keys. Set the dashboard webhook URL to `APP_URL/api/paystack/webhook`. |
 
-## Project layout
+`PAYSTACK_USD_ENABLED=true` should be set only after Paystack enables USD for the business. Until then, a shopper browsing in USD is charged the NGN equivalent, and checkout tells them so.
 
-```
-prisma/                schema, migrations, sample-data.ts (labelled samples), seed.ts
-src/lib/core/          framework-free business logic (unit-tested): money, pricing, validation, crypto,
-                       paystack, orders, catalogue, access, admin validation
-src/lib/server/        server-only: db, sessions, cart, checkout, inventory, payments, rate limit, audit, mail
-src/app/(store)/       storefront, cart, checkout, accounts, order tracking
-src/app/admin/         admin dashboard (STAFF / ADMIN roles)
-src/app/api/           Paystack webhook, reservation cleanup
-tests/                 unit, db, e2e
-docs/LAUNCH_CHECKLIST.md
-```
+## Security notes
 
-## Roles
+- Secrets live only in `.env` and the hosting provider's variables. `.env*` is git-ignored.
+- Security headers include CSP, frame-ancestors none, nosniff, a referrer policy and HSTS (HSTS in production).
+- Server actions are origin-checked by Next.js. Every admin page and action re-checks the ADMIN role server-side.
+- Sign-in, registration, checkout, tracking and cart quotes are rate-limited in memory (single instance only; use Redis if scaled out).
+- Order tracking returns the same error for a wrong number or a wrong email, so it doesn't reveal which orders exist.
+- Guest orders are not attached to new accounts by email, because email verification isn't implemented yet.
 
-- **CUSTOMER** — storefront and own account.
-- **STAFF** — orders, products, categories, stock.
-- **ADMIN** — everything, plus customers/roles, delivery zones, archiving products, marking refunds.
+## Supplier integration (not started)
 
-## Secrets
-
-Never commit `.env`. It's ignored by `.gitignore`. Card details are entered only on Paystack's hosted page;
-the database stores only Paystack's reference, card brand and last four digits.
+`Product.supplier` / `Product.supplierSku` are reserved for a future feed (e.g. BigBuy). **Do not integrate until the owner approves.**
