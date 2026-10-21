@@ -1,0 +1,6 @@
+# Keep shell scripts and SQL with LF endings on every OS (bash fails on CRLF).
+*.sh   text eol=lf
+*.sql  text eol=lf
+# Everything else: let Git normalise line endings.
+*      text=auto
+*.png  binary
